@@ -76,6 +76,9 @@ export default function Landing() {
               <Link className="btn-primary" to="/signup">
                 Join FoodBridge <ArrowRight size={16} />
               </Link>
+              <Link className="btn-outline border-terracotta text-terracotta hover:bg-terracotta/10 font-bold" to="/sponsor">
+                🎁 Sponsor Fresh Meals
+              </Link>
               <Link className="btn-outline" to="/login">
                 Explore demo
               </Link>

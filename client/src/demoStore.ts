@@ -412,3 +412,67 @@ export function getDashboardStats(user: User) {
 
   return { meals, total, people, weekly };
 }
+
+export interface SponsorPackageInput {
+  sponsorName: string;
+  sponsorEmail: string;
+  packageName: string;
+  mealsCount: number;
+  amountRupees: number;
+  targetNgoName: string;
+  kitchenPartner: string;
+  personalMessage?: string;
+}
+
+export function sponsorMealPackage(input: SponsorPackageInput): Donation {
+  const users = getUsers();
+  const donorUser: User = {
+    _id: `sponsor_${Date.now()}`,
+    name: input.sponsorName || 'Anonymous Sponsor',
+    email: input.sponsorEmail || 'sponsor@foodbridge.demo',
+    role: 'donor',
+    organization: `Sponsored via ${input.kitchenPartner}`,
+    location: { coordinates: [77.6408, 12.9719] },
+  };
+
+  const ngos = users.filter((u) => u.role === 'ngo');
+  const matchedNgo = ngos.find((n) => n.organization === input.targetNgoName) || ngos[0];
+
+  const newDonation: Donation = {
+    _id: `sp_${Date.now()}`,
+    title: `📦 SPONSORED: ${input.packageName}`,
+    foodType: `Fresh Hot Meals (${input.kitchenPartner})`,
+    quantity: `${input.mealsCount} freshly packed meal boxes`,
+    meals: input.mealsCount,
+    preparedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 5 * 3600_000).toISOString(),
+    status: 'claimed',
+    donor: donorUser,
+    ngo: matchedNgo,
+    address: matchedNgo?.ngo?.address || 'Indiranagar Community Kitchen, Bengaluru',
+    location: { coordinates: [77.6408, 12.9719] },
+    notes: input.personalMessage ? `Sponsor note: "${input.personalMessage}"` : 'Sponsored meal package — priority dispatch.',
+    dietaryNote: '🌱 Freshly Cooked • High Quality Assurance',
+    distanceKm: 2.4,
+    createdAt: new Date().toISOString(),
+    assignment: {
+      riderId: 'rider_001',
+      riderName: 'Ravi Kumar (EV Rider)',
+      riderPhone: '+91 98470 11234',
+      vehicleType: 'Electric scooter',
+      rating: 4.9,
+      pickupDistanceKm: 0.8,
+      etaToDonorMinutes: 5,
+      distanceDonorToNgoKm: 2.4,
+      etaDonorToNgoMinutes: 12,
+      totalRouteKm: 3.2,
+      matchedAt: new Date().toISOString(),
+    },
+  };
+
+  const list = getDonations();
+  list.unshift(newDonation);
+  setDonations(list);
+  return newDonation;
+}
+
