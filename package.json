@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
-    "build": "npm run build -w client && npm run build -w server",
+    "build": "npm run build --prefix client",
     "seed": "npm run seed -w server"
   },
   "devDependencies": {
